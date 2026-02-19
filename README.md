@@ -9,7 +9,7 @@ This service generates realistic tool outputs (HTML, Markdown, JSON, etc.) with 
 ## Installation
 
 ```bash
-cd service-test
+cd prompt-injection-testing
 pip install -r requirements.txt
 ```
 
@@ -208,7 +208,7 @@ curl "http://localhost:8081/test/test?clean=true&filetype=json"
 
 2. **Start test samples service (port 8081):**
    ```bash
-   cd service-test && python main.py
+   cd prompt-injection-testing && python main.py
    ```
 
 3. **Test scanning directly:**
@@ -255,7 +255,7 @@ Default: `8081` (configurable in `main.py`)
 ## Project Structure
 
 ```
-service-test/
+prompt-injection-testing/
 ├── app.py              # FastAPI entry point
 ├── generator.py        # SampleGenerator class
 ├── templates.py        # Attack templates
