@@ -1,0 +1,7 @@
+version: '3.8'
+services:
+  prompt-injection-testing:
+    build: .
+    ports:
+      - "8081:8081"
+    restart: unless-stopped
