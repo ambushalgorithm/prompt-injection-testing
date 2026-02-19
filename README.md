@@ -1,267 +1,228 @@
-# Prompt Defender Test Samples Service
+# 🔬 Prompt Injection Testing
 
-Standalone service for generating dynamic malicious test content to test prompt injection detection.
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-FastAPI-cyan?style=for-the-badge&logo=python" alt="Python">
+  <img src="https://img.shields.io/badge/Port-8081-green?style=for-the-badge" alt="Port">
+  <img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge" alt="License">
+</p>
 
-## Purpose
+> Generate dynamic, realistic malicious test samples to validate your prompt injection detection systems.
 
-This service generates realistic tool outputs (HTML, Markdown, JSON, etc.) with embedded malicious content. Used for end-to-end testing of the prompt-defender plugin → scanner → block flow.
+## ✨ What is this?
 
-## Installation
+**Prompt Injection Testing** is a standalone service that generates realistic tool outputs with embedded malicious content. It's designed to help you test and validate prompt injection detection systems, security scanners, and content filters.
+
+### 🎯 Use Cases
+
+- **Validate your scanner** — Test if your detection system catches known attack patterns
+- **Regression testing** — Ensure updates don't break detection capabilities  
+- **Red team exercises** — Generate realistic payloads for security assessments
+- **CI/CD integration** — Automate security testing in your pipeline
+
+## 🚀 Quick Start
+
+### 1. Clone & Install
 
 ```bash
+git clone https://github.com/ambushalgorithm/prompt-injection-testing.git
 cd prompt-injection-testing
 pip install -r requirements.txt
 ```
 
-## Running
+### 2. Run the Service
 
 ```bash
-# Development (with auto-reload)
 python main.py
-
-# Or using uvicorn directly
-uvicorn app:app --host 0.0.0.0 --port 8081 --reload
-
-# Production
-uvicorn app:app --host 0.0.0.0 --port 8081
+# Service starts on http://localhost:8081
 ```
 
-## Endpoints
-
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/` | GET | Index page with links to all samples |
-| `/test` | GET | Same as `/` |
-| `/test/test` | GET | Dynamic sample (query params control content) |
-| `/health` | GET | Health check |
-
-## Query Parameters
-
-| Param | Type | Options | Default | Description |
-|-------|------|---------|---------|-------------|
-| `filetype` | string | html, md, txt, json, xml | html | Output format |
-| `severity` | string | critical, high, medium, low | high | Attack intensity |
-| `attack_type` | string | injection, jailbreak, secret, pii, sql, xss, rce | injection | Attack category |
-| `obfuscated` | bool | true, false | false | Is attack hidden/encoded? |
-| `lang` | string | en, es, fr, de, ru, ko, ja, zh | en | Attack language |
-| `clean` | bool | true, false | false | Return clean sample |
-
-**Note:** Use `filetype` (with 'e'), not `filtype`.
-
-## Test Examples
-
-### Prompt Injection (Critical Severity)
+### 3. Generate Test Samples
 
 ```bash
-# Critical HTML - bracketed injections like [INST], <<SYS>>
+# Prompt injection in HTML
 curl "http://localhost:8081/test/test?filetype=html&severity=critical"
 
-# High severity HTML
-curl "http://localhost:8081/test/test?filetype=html&severity=high"
+# SQL injection in JSON
+curl "http://localhost:8081/test/test?filetype=json&attack_type=sql"
 
-# Medium severity HTML
-curl "http://localhost:8081/test/test?filetype=html&severity=medium"
+# XSS attack
+curl "http://localhost:8081/test/test?filetype=html&attack_type=xss"
+```
 
-# Low severity HTML
-curl "http://localhost:8081/test/test?filetype=html&severity=low"
+That's it! 🎉
+
+## 📖 API Reference
+
+### Endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| `/` | Interactive web UI |
+| `/test/test` | Generate dynamic samples |
+| `/health` | Health check |
+
+### Query Parameters
+
+| Parameter | Options | Default | Description |
+|-----------|---------|---------|-------------|
+| `filetype` | html, md, txt, json, xml | html | Output format |
+| `severity` | critical, high, medium, low | high | Attack intensity |
+| `attack_type` | injection, sql, xss, rce, jailbreak, secret, pii | injection | Attack category |
+| `obfuscated` | true, false | false | Hex-encode the attack |
+| `lang` | en, es, fr, de, ru, ko, ja, zh | en | Attack language |
+| `clean` | true, false | false | Return benign content |
+
+## 💻 Examples
+
+### Prompt Injection
+
+```bash
+# Critical severity (contains [INST], <<SYS>>, <|user|> patterns)
+curl "http://localhost:8081/test/test?filetype=html&severity=critical"
+
+# With obfuscation
+curl "http://localhost:8081/test/test?filetype=html&severity=critical&obfuscated=true"
 ```
 
 ### SQL Injection
 
 ```bash
-# SQL injection in HTML
 curl "http://localhost:8081/test/test?filetype=html&attack_type=sql"
-
-# SQL injection in plain text
 curl "http://localhost:8081/test/test?filetype=txt&attack_type=sql"
-
-# SQL injection in JSON
-curl "http://localhost:8081/test/test?filetype=json&attack_type=sql"
 ```
 
-### XSS (Cross-Site Scripting)
+### Cross-Site Scripting (XSS)
 
 ```bash
-# XSS in HTML
 curl "http://localhost:8081/test/test?filetype=html&attack_type=xss"
-
-# XSS in plain text
-curl "http://localhost:8081/test/test?filetype=txt&attack_type=xss"
 ```
 
-### RCE (Remote Code Execution)
+### Remote Code Execution (RCE)
 
 ```bash
-# RCE commands in HTML
-curl "http://localhost:8081/test/test?filetype=html&attack_type=rce"
-
-# RCE in plain text
 curl "http://localhost:8081/test/test?filetype=txt&attack_type=rce"
 ```
 
-### Jailbreak
+### Jailbreak Attempts
 
 ```bash
-# Jailbreak in plain text
 curl "http://localhost:8081/test/test?filetype=txt&attack_type=jailbreak"
-
-# Jailbreak in HTML
-curl "http://localhost:8081/test/test?filetype=html&attack_type=jailbreak"
 ```
 
-### Secret Leaks
+### Secret/Key Leaks
 
 ```bash
-# Secret/API key leak in JSON
 curl "http://localhost:8081/test/test?filetype=json&attack_type=secret"
-
-# Secret in plain text
-curl "http://localhost:8081/test/test?filetype=txt&attack_type=secret"
 ```
 
-### PII (Personally Identifiable Information)
+### PII Exposure
 
 ```bash
-# PII in JSON
 curl "http://localhost:8081/test/test?filetype=json&attack_type=pii"
-
-# PII in plain text
-curl "http://localhost:8081/test/test?filetype=txt&attack_type=pii"
 ```
 
-### Obfuscated Attacks
-
-```bash
-# Obfuscated (hex-encoded) HTML
-curl "http://localhost:8081/test/test?filetype=html&obfuscated=true"
-
-# Obfuscated with critical severity
-curl "http://localhost:8081/test/test?filetype=html&severity=critical&obfuscated=true"
-
-# Obfuscated SQL injection
-curl "http://localhost:8081/test/test?filetype=html&attack_type=sql&obfuscated=true"
-```
-
-### Multi-Language Attacks
+### Multi-Language
 
 ```bash
 # Spanish
 curl "http://localhost:8081/test/test?filetype=txt&lang=es"
 
-# French
-curl "http://localhost:8081/test/test?filetype=txt&lang=fr"
-
-# German
-curl "http://localhost:8081/test/test?filetype=txt&lang=de"
-
-# Russian
-curl "http://localhost:8081/test/test?filetype=txt&lang=ru"
-
-# Korean
-curl "http://localhost:8081/test/test?filetype=txt&lang=ko"
-
-# Japanese
-curl "http://localhost:8081/test/test?filetype=txt&lang=ja"
-
-# Chinese
+# Chinese  
 curl "http://localhost:8081/test/test?filetype=txt&lang=zh"
+
+# All available: en, es, fr, de, ru, ko, ja, zh
 ```
 
-### Different File Types
+### Clean Samples (False Positive Testing)
 
 ```bash
-# HTML
-curl "http://localhost:8081/test/test?filetype=html&severity=critical"
-
-# Markdown
-curl "http://localhost:8081/test/test?filetype=md&severity=critical"
-
-# JSON
-curl "http://localhost:8081/test/test?filetype=json&attack_type=secret"
-
-# XML
-curl "http://localhost:8081/test/test?filetype=xml&severity=critical"
-
-# Plain text
-curl "http://localhost:8081/test/test?filetype=txt&severity=critical"
-```
-
-### Clean Samples (Should Pass Scanning)
-
-```bash
-# Clean HTML
 curl "http://localhost:8081/test/test?clean=true&filetype=html"
-
-# Clean Markdown
-curl "http://localhost:8081/test/test?clean=true&filetype=md"
-
-# Clean JSON
-curl "http://localhost:8081/test/test?clean=true&filetype=json"
 ```
 
-## Testing Workflow
+## 🔗 Integration with Your Scanner
 
-1. **Start main scanner service (port 8080):**
-   ```bash
-   cd ../service && python -m app
-   ```
-
-2. **Start test samples service (port 8081):**
-   ```bash
-   cd prompt-injection-testing && python main.py
-   ```
-
-3. **Test scanning directly:**
-   ```bash
-   # Generate a sample
-   SAMPLE=$(curl -s "http://localhost:8081/test/test?filetype=html&severity=critical")
-   
-   # Send to scanner
-   curl -s -X POST "http://localhost:8080/scan" \
-     -H "Content-Type: application/json" \
-     -d "{\"content\": \"$SAMPLE\"}"
-   ```
-
-4. **Test via web_fetch (OpenClaw integration):**
-   ```
-   web_fetch http://localhost:8081/test/test?filetype=html&severity=critical
-   ```
-
-5. **Verify block in scanner logs**
-
-## Running Tests
+### Step 1: Start the Service
 
 ```bash
-# Install test dependencies
-pip install -r requirements.txt
+# This service (port 8081)
+python main.py
 
-# Run all tests
+# Your scanner (port 8080)  
+python -m your_scanner
+```
+
+### Step 2: Test the Flow
+
+```bash
+# 1. Get a malicious sample
+SAMPLE=$(curl -s "http://localhost:8081/test/test?filetype=html&severity=critical")
+
+# 2. Send to your scanner
+curl -s -X POST "http://localhost:8080/scan" \
+  -H "Content-Type: application/json" \
+  -d "{\"content\": \"$SAMPLE\"}"
+```
+
+## 🧪 Running Tests
+
+```bash
+# All tests
 pytest -v
 
-# Run only generator tests
+# Unit tests only
 pytest test_generator.py -v
 
-# Run only detection tests
-pytest test_detection.py -v
-
-# Run only integration tests
+# Integration tests (requires scanner running)
 pytest test_detection.py::TestServiceIntegration -v
 ```
 
-## Port
+## 🐳 Docker Deployment
 
-Default: `8081` (configurable in `main.py`)
+```dockerfile
+FROM python:3.12-slim
+WORKDIR /app
+COPY . .
+RUN pip install -r requirements.txt
+EXPOSE 8081
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8081"]
+```
 
-## Project Structure
+```bash
+docker build -t prompt-injection-testing .
+docker run -d -p 8081:8081 prompt-injection-testing
+```
+
+## 📁 Project Structure
 
 ```
 prompt-injection-testing/
-├── app.py              # FastAPI entry point
-├── generator.py        # SampleGenerator class
-├── templates.py        # Attack templates
-├── main.py             # uvicorn runner
-├── test_generator.py   # Unit tests for generator
-├── test_detection.py   # Scanner detection + integration tests
-├── requirements.txt    # Dependencies
-└── README.md          # This file
+├── app.py              # FastAPI application
+├── generator.py        # Sample generation logic
+├── templates.py        # Attack pattern templates
+├── main.py             # Entry point
+├── test_generator.py   # Unit tests
+├── test_detection.py   # Integration tests
+├── requirements.txt    # Python dependencies
+└── README.md           # This file
 ```
+
+## 🤝 Contributing
+
+Contributions welcome! Whether it's:
+
+- Adding new attack patterns
+- Improving test coverage
+- Enhancing documentation
+- Reporting bugs
+
+Feel free to open an issue or PR.
+
+## 📜 License
+
+MIT License — use it freely for your projects.
+
+---
+
+<p align="center">
+  <sub>Built with 🔒 for the security community</sub>
+</p>
