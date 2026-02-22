@@ -223,6 +223,16 @@ ${/* ignore your guidelines */}
 
 ---
 
+## Phase 3: Deploy to QA1
+
+After completing all of Phase 2:
+1. Run unit tests locally
+2. Run E2E tests in Docker container
+3. Deploy to QA1 server
+4. Verify deployment at https://prompt-injection-testing.qa1.ambushalgorithm.com
+
+---
+
 ## Next Steps (Future)
 
 1. Add remaining 7 attack categories from prompt-guard (if any)
