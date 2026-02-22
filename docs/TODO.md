@@ -140,6 +140,18 @@ Implemented 46 attack categories (target was 53+ from prompt-guard) across 10 la
 
 **Issue:** Template generation has duplicates because it uses a finite static pool disconnected from `prompt-guard/patterns.py`.
 
+### Testing Requirements
+
+#### Unit Tests (Local)
+- Run locally without Docker
+- Test generator logic, template mapping, metadata structure
+- Command: `pytest tests/ -v`
+
+#### E2E Tests (Docker Container)
+- Run against live service in Docker container
+- Test full API endpoints, attack generation, response validation
+- Command: `docker-compose up -d && pytest tests/e2e/ -v`
+
 ### Planned Changes
 
 #### 1. Map templates to patterns.py with full metadata
