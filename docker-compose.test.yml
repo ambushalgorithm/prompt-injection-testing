@@ -1,0 +1,38 @@
+# Docker Compose for E2E Tests
+# Run with: docker-compose -f docker-compose.test.yml up
+# Tests will run automatically when container starts
+
+version: '3.8'
+
+services:
+  prompt-defender-test:
+    build: .
+    container_name: prompt-defender-test-e2e
+    ports:
+      - "8081:8081"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8081
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    command: >
+      sh -c "uvicorn app:app --host 0.0.0.0 --port 8081"
+
+  test-runner:
+    image: python:3.11-slim
+    container_name: prompt-defender-test-runner
+    depends_on:
+      - prompt-defender-test
+    volumes:
+      - .:/app
+    working_dir: /app
+    environment:
+      - SERVICE_URL=http://prompt-defender-test:8081
+    command: >
+      sh -c "pip install pytest requests -q &&
+             sleep 5 &&
+             python -m pytest tests/e2e/test_api.py -v --tb=short"

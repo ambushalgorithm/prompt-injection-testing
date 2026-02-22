@@ -1,228 +1,173 @@
-# 🔬 Prompt Injection Testing
+# Prompt Defender Test Samples
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Python-FastAPI-cyan?style=for-the-badge&logo=python" alt="Python">
-  <img src="https://img.shields.io/badge/Port-8081-green?style=for-the-badge" alt="Port">
-  <img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge" alt="License">
-</p>
+**Dynamic malicious content generator for testing prompt injection detection systems.**
 
-> Generate dynamic, realistic malicious test samples to validate your prompt injection detection systems.
+Built with: Python, FastAPI
 
-## ✨ What is this?
+## Overview
 
-**Prompt Injection Testing** is a standalone service that generates realistic tool outputs with embedded malicious content. It's designed to help you test and validate prompt injection detection systems, security scanners, and content filters.
+This tool generates realistic malicious test samples based on actual prompt injection patterns. It supports **46+ attack categories** across **10 languages** for testing prompt guard systems.
 
-### 🎯 Use Cases
+⚠️ **For security testing only** - This tool generates simulated attack patterns for defensive testing purposes.
 
-- **Validate your scanner** — Test if your detection system catches known attack patterns
-- **Regression testing** — Ensure updates don't break detection capabilities  
-- **Red team exercises** — Generate realistic payloads for security assessments
-- **CI/CD integration** — Automate security testing in your pipeline
+## Features
 
-## 🚀 Quick Start
+- **46+ Attack Categories** - From instruction override to reverse shell attacks
+- **10 Languages** - EN, KO, JA, ZH, ES, DE, FR, RU, PT, VI
+- **5 File Types** - HTML, Markdown, JSON, XML **Obfusc, TXT
+-ation Support** - Base64, Hex, HTML Entities, URL Encoding
+- **Clean Samples** - Generate benign content for negative testing
 
-### 1. Clone & Install
+## Quick Start
 
 ```bash
-git clone https://github.com/ambushalgorithm/prompt-injection-testing.git
-cd prompt-injection-testing
+# Install dependencies
 pip install -r requirements.txt
+
+# Run the service
+uvicorn app:app --host 0.0.0.0 --port 8080
+
+# Generate a sample
+curl "http://localhost:8080/test/test?type=instruction_override&filetype=html"
 ```
 
-### 2. Run the Service
+## API Usage
+
+### Generate Attack Sample
 
 ```bash
-python main.py
-# Service starts on http://localhost:8081
+# Basic usage
+curl "http://localhost:8080/test/test?type=instruction_override"
+
+# With parameters
+curl "http://localhost:8080/test/test?type=skill_reverse_shell&filetype=txt&obfuscated=true&lang=ko"
+
+# Clean sample (negative test)
+curl "http://localhost:8080/test/test?clean=true&filetype=html"
 ```
-
-### 3. Generate Test Samples
-
-```bash
-# Prompt injection in HTML
-curl "http://localhost:8081/test/test?filetype=html&severity=critical"
-
-# SQL injection in JSON
-curl "http://localhost:8081/test/test?filetype=json&attack_type=sql"
-
-# XSS attack
-curl "http://localhost:8081/test/test?filetype=html&attack_type=xss"
-```
-
-That's it! 🎉
-
-## 📖 API Reference
-
-### Endpoints
-
-| Endpoint | Description |
-|----------|-------------|
-| `/` | Interactive web UI |
-| `/test/test` | Generate dynamic samples |
-| `/health` | Health check |
 
 ### Query Parameters
 
-| Parameter | Options | Default | Description |
-|-----------|---------|---------|-------------|
-| `filetype` | html, md, txt, json, xml | html | Output format |
-| `severity` | critical, high, medium, low | high | Attack intensity |
-| `attack_type` | injection, sql, xss, rce, jailbreak, secret, pii | injection | Attack category |
-| `obfuscated` | true, false | false | Hex-encode the attack |
-| `lang` | en, es, fr, de, ru, ko, ja, zh | en | Attack language |
-| `clean` | true, false | false | Return benign content |
+| Parameter | Type | Description | Default |
+|-----------|------|-------------|---------|
+| `type` | string | Attack type (46+ options) | instruction_override |
+| `filetype` | string | Output format: html, md, txt, json, xml | html |
+| `severity` | string | critical, high, medium, low | high |
+| `obfuscated` | bool | Obfuscate the attack | false |
+| `lang` | string | Language: en, ko, ja, zh, es, de, fr, ru, pt, vi | en |
+| `clean` | bool | Return clean sample | false |
 
-## 💻 Examples
-
-### Prompt Injection
+### List Attack Types
 
 ```bash
-# Critical severity (contains [INST], <<SYS>>, <|user|> patterns)
-curl "http://localhost:8081/test/test?filetype=html&severity=critical"
-
-# With obfuscation
-curl "http://localhost:8081/test/test?filetype=html&severity=critical&obfuscated=true"
+curl "http://localhost:8080/api/attack-types"
 ```
 
-### SQL Injection
+## Attack Categories
+
+### Core Attacks (Phase 1)
+- `instruction_override` - Override/disregard commands
+- `role_manipulation` - Pretend/act as X
+- `system_impersonation` - [SYSTEM:], admin mode
+- `output_manipulation` - Don't mention, hide facts
+- `data_exfiltration` - API keys, credentials
+
+### Social Engineering (Phase 2)
+- `approval_expansion` - "You already approved..."
+- `dm_social_engineering` - "Just between us"
+- `emotional_manipulation` - Threats, moral dilemmas
+- `authority_recon` - Fake admin, IT department
+- `urgency_manipulation` - "URGENT", "CEO demands"
+
+### Advanced Attacks (Phase 3)
+- `indirect_injection` - URL/file/image injection
+- `context_hijacking` - "As we discussed earlier..."
+- `multi_turn_manipulation` - Gradual escalation
+- `token_smuggling` - Unicode, encoding tricks
+- `system_prompt_mimicry` - Claude/GPT internal tags
+
+### Bypass Techniques (Phase 4)
+- `guardrail_bypass_extended` - Forget guardrails
+- `allowlist_bypass` - Trusted domain abuse
+- `hidden_text_injection` - 1pt font, white-on-white
+- `safety_bypass` - Filter evasion
+
+### Infrastructure Attacks (Phase 5)
+- `auto_approve_exploit` - "always allow" abuse
+- `mcp_abuse` - Model Context Protocol
+- `browser_agent_injection` - Hidden text in pages
+
+### Skill Weaponization (Phase 6)
+- `skill_reverse_shell` - bash -i, nc -e
+- `skill_ssh_injection` - authorized_keys manipulation
+- `skill_exfiltration_pipeline` - .env → webhook
+- `skill_cognitive_rootkit` - SOUL.md, AGENTS.md injection
+
+### Specialized (Phase 8)
+- `credential_path` - Path traversal patterns
+- `scenario_jailbreak` - Fiction/dream jailbreak
+- `repetition_attack` - Token overflow
+- `malware_description` - Malware creation requests
+
+### Backwards Compatibility
+Old attack type names still work:
+- `injection` → instruction_override
+- `jailbreak` → scenario_jailbreak
+- `secret` → data_exfiltration
+- `pii` → credential_path
+- `sql` → json_injection_moltbook
+- `xss` → hidden_text_injection
+- `rce` → skill_reverse_shell
+
+## Docker Deployment
 
 ```bash
-curl "http://localhost:8081/test/test?filetype=html&attack_type=sql"
-curl "http://localhost:8081/test/test?filetype=txt&attack_type=sql"
+# Build and run
+docker-compose up -d
+
+# Run E2E tests
+docker-compose -f docker-compose.test.yml up
 ```
 
-### Cross-Site Scripting (XSS)
+## Testing
 
 ```bash
-curl "http://localhost:8081/test/test?filetype=html&attack_type=xss"
+# Unit tests (local)
+python -m pytest test_generator.py -v
+
+# Integration tests (local)
+python -m pytest test_detection.py -v
+
+# E2E tests (Docker only)
+docker-compose -f docker-compose.test.yml up
 ```
 
-### Remote Code Execution (RCE)
-
-```bash
-curl "http://localhost:8081/test/test?filetype=txt&attack_type=rce"
-```
-
-### Jailbreak Attempts
-
-```bash
-curl "http://localhost:8081/test/test?filetype=txt&attack_type=jailbreak"
-```
-
-### Secret/Key Leaks
-
-```bash
-curl "http://localhost:8081/test/test?filetype=json&attack_type=secret"
-```
-
-### PII Exposure
-
-```bash
-curl "http://localhost:8081/test/test?filetype=json&attack_type=pii"
-```
-
-### Multi-Language
-
-```bash
-# Spanish
-curl "http://localhost:8081/test/test?filetype=txt&lang=es"
-
-# Chinese  
-curl "http://localhost:8081/test/test?filetype=txt&lang=zh"
-
-# All available: en, es, fr, de, ru, ko, ja, zh
-```
-
-### Clean Samples (False Positive Testing)
-
-```bash
-curl "http://localhost:8081/test/test?clean=true&filetype=html"
-```
-
-## 🔗 Integration with Your Scanner
-
-### Step 1: Start the Service
-
-```bash
-# This service (port 8081)
-python main.py
-
-# Your scanner (port 8080)  
-python -m your_scanner
-```
-
-### Step 2: Test the Flow
-
-```bash
-# 1. Get a malicious sample
-SAMPLE=$(curl -s "http://localhost:8081/test/test?filetype=html&severity=critical")
-
-# 2. Send to your scanner
-curl -s -X POST "http://localhost:8080/scan" \
-  -H "Content-Type: application/json" \
-  -d "{\"content\": \"$SAMPLE\"}"
-```
-
-## 🧪 Running Tests
-
-```bash
-# All tests
-pytest -v
-
-# Unit tests only
-pytest test_generator.py -v
-
-# Integration tests (requires scanner running)
-pytest test_detection.py::TestServiceIntegration -v
-```
-
-## 🐳 Docker Deployment
-
-```dockerfile
-FROM python:3.12-slim
-WORKDIR /app
-COPY . .
-RUN pip install -r requirements.txt
-EXPOSE 8081
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8081"]
-```
-
-```bash
-docker build -t prompt-injection-testing .
-docker run -d -p 8081:8081 prompt-injection-testing
-```
-
-## 📁 Project Structure
+## Project Structure
 
 ```
 prompt-injection-testing/
-├── app.py              # FastAPI application
-├── generator.py        # Sample generation logic
-├── templates.py        # Attack pattern templates
-├── main.py             # Entry point
-├── test_generator.py   # Unit tests
-├── test_detection.py   # Integration tests
-├── requirements.txt    # Python dependencies
-└── README.md           # This file
+├── app.py                 # FastAPI application
+├── generator.py          # Sample generator
+├── templates.py           # Attack templates (46+ categories)
+├── test_generator.py     # Unit tests (63 tests)
+├── test_detection.py     # Integration tests (35 tests)
+├── tests/
+│   └── e2e/
+│       └── test_api.py   # E2E tests (Docker-only)
+├── docker-compose.yml    # Production deployment
+├── docker-compose.test.yml # E2E test deployment
+├── .github/
+│   └── workflows/
+│       └── test.yml     # CI/CD pipeline
+├── requirements.txt      # Python dependencies
+└── README.md            # This file
 ```
 
-## 🤝 Contributing
+## Version History
 
-Contributions welcome! Whether it's:
+- **0.2.0** - 46 attack categories, 10 languages, full test suite
+- **0.1.0** - Initial version with 7 attack types
 
-- Adding new attack patterns
-- Improving test coverage
-- Enhancing documentation
-- Reporting bugs
+## License
 
-Feel free to open an issue or PR.
-
-## 📜 License
-
-MIT License — use it freely for your projects.
-
----
-
-<p align="center">
-  <sub>Built with 🔒 for the security community</sub>
-</p>
+MIT
