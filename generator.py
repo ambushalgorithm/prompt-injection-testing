@@ -18,6 +18,7 @@ from templates import (
     ATTACK_TEMPLATES,
     LANG_TEMPLATES,
     ATTACK_TYPE_MAP,
+    generate_structured_output,
 )
 
 
@@ -237,18 +238,9 @@ class SampleGenerator:
 </html>"""
 
     def _generate_md(self, params: GenerationParams) -> str:
-        """Generate Markdown with embedded attacks."""
-        attack_content = self._get_attack_content(params)
-        
-        templates_list = templates.MARKDOWN_TEMPLATES.get(
-            params.severity, templates.MARKDOWN_TEMPLATES["low"]
-        )
-        template = random.choice(templates_list) if templates_list else "{attack}"
-        
-        if params.obfuscated:
-            attack_content = self.obfuscator.obfuscate(attack_content)
-        
-        attack_md = template.replace("{attack}", attack_content)
+        """Generate Markdown with embedded attacks - structured format."""
+        # Use structured output format
+        return generate_structured_output(params.attack_type, params.lang)
 
         return f"""# Project Documentation
 
