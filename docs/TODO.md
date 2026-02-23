@@ -328,6 +328,9 @@ After completing all of Phase 2:
 5. **E2E Tests (Docker):** Write/update tests for structured output
    - Run: `docker-compose up -d && pytest tests/e2e/ -v`
 
+6. **Deploy to QA1:** After tests pass, deploy and verify
+   - URL: https://prompt-injection-testing.qa1.ambushalgorithm.com
+
 **Goal:** All placeholders defined in _fill_template() should appear in structured output.
 
 ---
