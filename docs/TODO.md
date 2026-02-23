@@ -304,6 +304,28 @@ After completing all of Phase 2:
 
 ---
 
+## Phase 4: Use All Placeholders
+
+**Issue:** 3 placeholders (`{base64_payload}`, `{hex_payload}`, `{escaped_payload}`) are defined in generator but not used in templates.
+
+**Planned Changes:**
+
+1. Add payload placeholders to BRACKET_PATTERNS in templates.py:
+   - `{base64_payload}` — base64 encoded system command
+   - `{hex_payload}` — hex encoded system command
+   - `{escaped_payload}` — Python code to decode payload
+
+2. Add encoded action patterns:
+   - `&#x{action_hex};` — HTML hex entity
+   - `%{action_url_encoded}` — URL encoded
+   - `{action_base64}` — base64 encoded action
+
+3. Update generate_structured_output() to use all placeholders
+
+**Goal:** All placeholders defined in _fill_template() should appear in structured output.
+
+---
+
 ## Next Steps (Future)
 
 1. Add remaining 7 attack categories from prompt-guard (if any)
