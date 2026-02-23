@@ -322,6 +322,12 @@ After completing all of Phase 2:
 
 3. Update generate_structured_output() to use all placeholders
 
+4. **Unit Tests (Local):** Write/update tests to verify all placeholders are used
+   - Run: `pytest tests/ -v`
+
+5. **E2E Tests (Docker):** Write/update tests for structured output
+   - Run: `docker-compose up -d && pytest tests/e2e/ -v`
+
 **Goal:** All placeholders defined in _fill_template() should appear in structured output.
 
 ---
